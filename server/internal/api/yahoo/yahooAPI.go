@@ -1,4 +1,4 @@
-package api
+package yahoo
 
 import (
 	"encoding/json"
@@ -6,21 +6,27 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-
-	"assert200.com/vincivia/internal/dto"
 )
 
 // url="https://query1.finance.yahoo.com/v7/finance/quote?symbols=GOOG,WORK"
 
-// Do It
-func Do() {
+// GetQuotes from Yahoo API
+func GetQuotes(symbols []string) {
 	var u url.URL
 	u.Scheme = "https"
 	u.Host = "query1.finance.yahoo.com"
 	u.Path = "v7/finance/quote"
 
+	symbolsString := ""
+	for i, symbol := range symbols {
+		symbolsString += symbol
+		if i < len(symbols)-1 {
+			symbolsString += ","
+		}
+	}
+
 	v := url.Values{}
-	v.Add("symbols", "GOOG,WORK")
+	v.Add("symbols", symbolsString)
 
 	u.RawQuery = v.Encode()
 
@@ -45,10 +51,10 @@ func Do() {
 		log.Fatal("ERROR: Reading response: ", err)
 	}
 
-	var quoteResponse dto.QuoteResponse
+	var quoteResponse QuoteResponse
 	err = json.Unmarshal(body, &quoteResponse)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("ERROR: Unmarshal response: ", err)
 	}
 
 	log.Println("%V", quoteResponse)
