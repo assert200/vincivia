@@ -22,11 +22,10 @@ type Row struct {
 	IPOYear   string `json:"ipoyear"`
 	Industry  string `json:"industry"`
 	Sector    string `json:"sector"`
-	URL       string `json:"url"`
 }
 
-// Security Type
-type Security struct {
+// Share Type
+type Share struct {
 	Symbol    string
 	Name      string
 	LastSale  float64
@@ -37,5 +36,4 @@ type Security struct {
 	IPOYear   int
 	Industry  string
 	Sector    string
-	URL       string
 }

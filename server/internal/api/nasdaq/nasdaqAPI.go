@@ -7,14 +7,15 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
-// This gets everything (including NYSTE Stockss)
+// This gets everything (including NYSE Shares)
 // https://api.nasdaq.com/api/screener/stocks?download=true
 // https://api.nasdaq.com/api/screener/stocks?download=true&exchange=nyse
 
-// GetStocks from Nasdaq API
-func GetStocks() []Security {
+// GetShares from Nasdaq API
+func GetShares() []Share {
 	var u url.URL
 	u.Scheme = "https"
 	u.Host = "api.nasdaq.com"
@@ -54,24 +55,41 @@ func GetStocks() []Security {
 		log.Fatal("ERROR: Unmarshal response: ", err)
 	}
 
-	var securities []Security
+	var shares []Share
 
 	for _, row := range stocksResponse.Data.Rows {
-		var security Security
+		var share Share
 
-		security.Symbol = row.Symbol
-		security.Name = row.Name
-		security.LastSale, _ = strconv.ParseFloat(row.LastSale, 64)
-		security.NetChange, _ = strconv.ParseFloat(row.NetChange, 64)
-		security.PctChange, _ = strconv.ParseFloat(row.PctChange, 64)
-		security.MarketCap, _ = strconv.ParseFloat(row.MarketCap, 64)
-		security.Country = row.Country
-		security.IPOYear, _ = strconv.Atoi(row.IPOYear)
-		security.Industry = row.Industry
-		security.Sector = row.Sector
-		security.URL = row.URL
-		securities = append(securities, security)
+		share.Symbol = row.Symbol
+		share.Name = row.Name
+		share.LastSale = quickParseFloat64(strings.TrimLeft(row.LastSale, "$"))
+		share.NetChange = quickParseFloat64(row.NetChange)
+		share.PctChange = quickParseFloat64(strings.TrimRight(row.PctChange, "%"))
+		share.MarketCap = quickParseFloat64(row.MarketCap)
+		share.Country = row.Country
+		share.IPOYear, _ = strconv.Atoi(row.IPOYear)
+		share.Industry = row.Industry
+		share.Sector = row.Sector
+		shares = append(shares, share)
 	}
 
-	return securities
+	return shares
+}
+
+func quickParseFloat64(rawText string) float64 {
+	cleanText := strings.ToLower(strings.TrimSpace(rawText))
+
+	if cleanText == "" {
+		return 0.0
+	}
+
+	if cleanText == "na" {
+		return 0.0
+	}
+
+	value, err := strconv.ParseFloat(cleanText, 64)
+	if err != nil {
+		log.Println("WARNING: Was unable to quickParseFloat64: ", cleanText)
+	}
+	return value
 }
