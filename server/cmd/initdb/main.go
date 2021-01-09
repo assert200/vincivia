@@ -39,20 +39,19 @@ func main() {
 				share_id share.id%type;
 				record_id record.id%type;
 			begin  
-
-			SELECT id 
-			FROM share 
-			into share_id
-			where symbol=p_symbol;
-				if not found then
-					raise notice'The share with symbol % could not be found', p_symbol;
-				insert into share (symbol, name, country, ipo_year, industry, sector) VALUES (p_symbol, p_name, p_country, p_ipo_year, p_industry, p_sector) returning id into share_id;
-				else
-					raise notice 'The share id is %', share_id;
-				end if;
+				SELECT id 
+				FROM share 
+				INTO share_id
+				WHERE symbol=p_symbol;
+				IF NOT FOUND THEN
+					RAISE NOTICE 'The share with symbol % could not be found', p_symbol;
+				insert into share (symbol, name, country, ipo_year, industry, sector) VALUES (p_symbol, p_name, p_country, p_ipo_year, p_industry, p_sector) RETURNING ID INTO share_id;
+				ELSE
+					RAISE NOTICE 'The share id is %', share_id;
+				END IF;
 				
-				insert into record (share_id, last_sale, net_change, pct_change, market_cap, recorded_at) VALUES (share_id, p_last_sale, p_net_change, p_pct_change, p_market_cap, p_recorded_at) returning id into record_id;
-				return record_id;
+				INSERT INTO record (share_id, last_sale, net_change, pct_change, market_cap, recorded_at) VALUES (share_id, p_last_sale, p_net_change, p_pct_change, p_market_cap, p_recorded_at) returning id into record_id;
+				RETURN record_id;
 			end 
 		$$ LANGUAGE plpgsql;
 		
