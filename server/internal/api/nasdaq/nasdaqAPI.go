@@ -60,16 +60,16 @@ func GetShares() []Share {
 	for _, row := range stocksResponse.Data.Rows {
 		var share Share
 
-		share.Symbol = row.Symbol
-		share.Name = row.Name
-		share.LastSale = quickParseFloat64(strings.TrimLeft(row.LastSale, "$"))
-		share.NetChange = quickParseFloat64(row.NetChange)
-		share.PctChange = quickParseFloat64(strings.TrimRight(row.PctChange, "%"))
-		share.MarketCap = quickParseFloat64(row.MarketCap)
-		share.Country = row.Country
-		share.IPOYear, _ = strconv.Atoi(row.IPOYear)
-		share.Industry = row.Industry
-		share.Sector = row.Sector
+		share.Symbol = strings.TrimSpace(row.Symbol)
+		share.Name = strings.TrimSpace(row.Name)
+		share.LastSale = quickParseFloat64(strings.TrimLeft(strings.TrimSpace(row.LastSale), "$"))
+		share.NetChange = quickParseFloat64(strings.TrimSpace(row.NetChange))
+		share.PctChange = quickParseFloat64(strings.TrimRight(strings.TrimSpace(row.PctChange), "%"))
+		share.MarketCap = quickParseFloat64(strings.TrimSpace(row.MarketCap))
+		share.Country = strings.TrimSpace(row.Country)
+		share.IPOYear, _ = strconv.Atoi(strings.TrimSpace(row.IPOYear))
+		share.Industry = strings.TrimSpace(row.Industry)
+		share.Sector = strings.TrimSpace(row.Sector)
 		shares = append(shares, share)
 	}
 

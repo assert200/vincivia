@@ -20,9 +20,10 @@ func main() {
 
 		_, err := db.AddShare(share, recordedAt)
 		if err != nil {
-			log.Println("Error adding share: ", err)
+			log.Printf("ERROR: Adding share: %+v\nWith error: %v\n", share, err)
+		} else {
+			fmt.Print(".")
 		}
-		fmt.Print(".")
 	}
 
 	log.Println("** Done ** ")
