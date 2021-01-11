@@ -8,6 +8,8 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+
+	"assert200.com/vincivia/internal/entity"
 )
 
 // This gets everything (including NYSE Shares)
@@ -15,7 +17,7 @@ import (
 // https://api.nasdaq.com/api/screener/stocks?download=true&exchange=nyse
 
 // GetShares from Nasdaq API
-func GetShares() []Share {
+func GetShares() []entity.Share {
 	var u url.URL
 	u.Scheme = "https"
 	u.Host = "api.nasdaq.com"
@@ -55,13 +57,14 @@ func GetShares() []Share {
 		log.Fatal("ERROR: Unmarshal response: ", err)
 	}
 
-	var shares []Share
+	var shares []entity.Share
 
 	for _, row := range stocksResponse.Data.Rows {
-		var share Share
+		var share entity.Share
 
 		share.Symbol = strings.TrimSpace(row.Symbol)
 		share.Name = strings.TrimSpace(row.Name)
+		share.Exchange = entity.US
 		share.LastSale = quickParseFloat64(strings.TrimLeft(strings.TrimSpace(row.LastSale), "$"))
 		share.NetChange = quickParseFloat64(strings.TrimSpace(row.NetChange))
 		share.PctChange = quickParseFloat64(strings.TrimRight(strings.TrimSpace(row.PctChange), "%"))

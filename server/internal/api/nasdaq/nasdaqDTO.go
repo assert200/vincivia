@@ -23,17 +23,3 @@ type Row struct {
 	Industry  string `json:"industry"`
 	Sector    string `json:"sector"`
 }
-
-// Share Type
-type Share struct {
-	Symbol    string
-	Name      string
-	LastSale  float64
-	NetChange float64
-	PctChange float64
-	MarketCap float64
-	Country   string
-	IPOYear   int
-	Industry  string
-	Sector    string
-}

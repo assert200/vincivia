@@ -1,8 +1,13 @@
 package yahoo
 
+import (
+	"errors"
+	"strings"
+)
+
 // QuoteResponse Type
 type QuoteResponse struct {
-	Results Results `json:"quoteResponse"`
+	Response Results `json:"quoteResponse"`
 }
 
 // Results Type
@@ -76,4 +81,14 @@ type Result struct {
 	MarketState                       string  `json:"marketState"`
 	DisplayName                       string  `json:"displayName"`
 	Symbol                            string  `json:"symbol"`
+}
+
+// FindResultBySymbol FindShareBySymbol
+func FindResultBySymbol(results []Result, symbol string) (Result, error) {
+	for _, result := range results {
+		if strings.ToLower(result.Symbol) == strings.ToLower(symbol) {
+			return result, nil
+		}
+	}
+	return Result{}, errors.New("Result with that symbol not found")
 }
